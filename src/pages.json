@@ -1,0 +1,60 @@
+{
+  "pages": [
+    {
+      "path": "pages/splash/splash",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "animationType": "fade-in"
+        }
+      }
+    },
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "魁星",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
+    },
+    {
+      "path": "pages/webview/webview",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "魁星",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
+    },
+    {
+      "path": "pages/pay/pay",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "支付",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false
+        }
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "魁星",
+    "navigationBarBackgroundColor": "#0D0221",
+    "backgroundColor": "#0D0221",
+    "app-plus": {
+      "background": "#0D0221"
+    }
+  }
+}
