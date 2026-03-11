@@ -10,7 +10,11 @@
     <!-- ─── Header ─── -->
     <view class="home__header">
       <view class="home__logo-mark">
-        <text class="home__logo-char">魁</text>
+        <image
+          class="home__logo-img"
+          src="/static/images/kuixinghomelogo.png"
+          mode="aspectFit"
+        />
       </view>
       <text class="home__title">魁星命理</text>
       <view class="home__rule">
@@ -90,58 +94,115 @@
 
     <!-- Bottom safe area -->
     <view class="home__safe-bottom" />
+
+    <!-- ─── Video Overlay ─── -->
+    <view v-if="showVideo" class="video-overlay" @tap.self="closeVideo">
+      <view class="video-overlay__box">
+        <video
+          class="video-overlay__player"
+          :src="videoSrc"
+          autoplay
+          controls
+          show-center-play-btn
+          object-fit="contain"
+          @ended="closeVideo"
+        />
+        <view class="video-overlay__close" @tap="closeVideo">
+          <text class="video-overlay__close-icon">✕</text>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import FeatureCard from '../../components/FeatureCard.vue'
+import { ref } from "vue";
+import FeatureCard from "../../components/FeatureCard.vue";
 
-const statusBarHeight = ref(0)
+const statusBarHeight = ref(0);
 
 uni.getSystemInfo({
   success(res) {
-    statusBarHeight.value = res.statusBarHeight || 0
+    statusBarHeight.value = res.statusBarHeight || 0;
   },
-})
+});
+
+const showVideo = ref(false);
+const videoSrc = ref("");
 
 const topRow1 = [
-  { icon: '紫', label: '紫微', action: 'webview' },
-  { icon: '命', label: '八字', action: 'webview' },
-  { icon: '运', label: '大运', action: 'webview' },
-]
+  {
+    icon: "紫",
+    label: "紫微",
+    action: "video",
+    video: "https://kuixing.cloud/videos/ziwei-intro.mp4",
+  },
+  {
+    icon: "命",
+    label: "八字",
+    action: "video",
+    video: "https://kuixing.cloud/videos/bazi-intro.mp4",
+  },
+  {
+    icon: "运",
+    label: "大运",
+    action: "video",
+    video: "https://kuixing.cloud/videos/dayun-intro.mp4",
+  },
+];
 
 const topRow2 = [
-  { icon: '年', label: '流年', action: 'webview' },
-  { icon: '月', label: '流月', action: 'webview' },
-  { icon: '日', label: '流日', action: 'webview' },
-]
+  {
+    icon: "年",
+    label: "流年",
+    action: "video",
+    video: "https://kuixing.cloud/videos/liunian-intro.mp4",
+  },
+  {
+    icon: "月",
+    label: "流月",
+    action: "video",
+    video: "https://kuixing.cloud/videos/liuyue-intro.mp4",
+  },
+  {
+    icon: "日",
+    label: "流日",
+    action: "video",
+    video: "https://kuixing.cloud/videos/liuri-intro.mp4",
+  },
+];
 
 const infoItems = [
-  { icon: '缘', label: '联系我们', action: 'contact' },
-  { icon: '魁', label: '关于魁星', action: 'about' },
-]
+  { icon: "缘", label: "联系我们", action: "contact" },
+  { icon: "魁", label: "关于魁星", action: "about" },
+];
 
 function onCardTap(item) {
-  if (item.action === 'webview') {
-    uni.navigateTo({ url: '/pages/webview/webview' })
-  } else if (item.action === 'contact') {
+  if (item.action === "video") {
+    videoSrc.value = item.video;
+    showVideo.value = true;
+  } else if (item.action === "contact") {
     uni.showModal({
-      title: '联系我们',
-      content: '请访问 kuixing.cloud 获取联系方式',
+      title: "联系我们",
+      content: "请访问 kuixing.cloud 获取联系方式",
       showCancel: false,
-    })
-  } else if (item.action === 'about') {
+    });
+  } else if (item.action === "about") {
     uni.showModal({
-      title: '关于魁星',
-      content: '魁星命理 — 专业紫微斗数命理平台\n版本 1.0.0',
+      title: "关于魁星",
+      content: "魁星命理 — 专业紫微斗数命理平台\n版本 1.0.0",
       showCancel: false,
-    })
+    });
   }
 }
 
+function closeVideo() {
+  showVideo.value = false;
+  videoSrc.value = "";
+}
+
 function onStartJourney() {
-  uni.navigateTo({ url: '/pages/webview/webview' })
+  uni.navigateTo({ url: "/pages/webview/webview" });
 }
 </script>
 
@@ -149,7 +210,13 @@ function onStartJourney() {
 .home {
   position: relative;
   min-height: 100vh;
-  background: linear-gradient(175deg, #0D0221 0%, #160D38 35%, #1A0A3E 55%, #110828 100%);
+  background: linear-gradient(
+    175deg,
+    #0d0221 0%,
+    #160d38 35%,
+    #1a0a3e 55%,
+    #110828 100%
+  );
   padding: 0 36rpx;
   box-sizing: border-box;
   overflow: hidden;
@@ -167,7 +234,11 @@ function onStartJourney() {
     height: 400rpx;
     top: 8%;
     right: -15%;
-    background: radial-gradient(circle, rgba(123, 79, 191, 0.12) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(123, 79, 191, 0.12) 0%,
+      transparent 70%
+    );
   }
 
   &--2 {
@@ -175,7 +246,11 @@ function onStartJourney() {
     height: 350rpx;
     bottom: 20%;
     left: -12%;
-    background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(201, 168, 76, 0.08) 0%,
+      transparent 70%
+    );
   }
 }
 
@@ -192,27 +267,23 @@ function onStartJourney() {
 .home__logo-mark {
   width: 100rpx;
   height: 100rpx;
-  border-radius: 50%;
-  border: 2rpx solid rgba(201, 168, 76, 0.35);
-  background: linear-gradient(145deg, rgba(42, 22, 96, 0.8) 0%, rgba(26, 10, 62, 0.6) 100%);
+
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 24rpx;
-  box-shadow: 0 0 50rpx rgba(201, 168, 76, 0.1);
 }
 
-.home__logo-char {
-  font-size: 48rpx;
-  font-weight: 700;
-  color: #D4B05E;
-  line-height: 1;
+.home__logo-img {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
 }
 
 .home__title {
   font-size: 52rpx;
   font-weight: 700;
-  color: #E8D5A3;
+  color: #e8d5a3;
   letter-spacing: 12rpx;
   margin-bottom: 20rpx;
 }
@@ -228,24 +299,32 @@ function onStartJourney() {
 .home__rule-wing {
   width: 80rpx;
   height: 1rpx;
-  background: linear-gradient(90deg, transparent 0%, rgba(201, 168, 76, 0.5) 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 168, 76, 0.5) 100%
+  );
 
   &:last-child {
-    background: linear-gradient(90deg, rgba(201, 168, 76, 0.5) 0%, transparent 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(201, 168, 76, 0.5) 0%,
+      transparent 100%
+    );
   }
 }
 
 .home__rule-diamond {
   width: 10rpx;
   height: 10rpx;
-  background: #C9A84C;
+  background: #c9a84c;
   transform: rotate(45deg);
   flex-shrink: 0;
 }
 
 .home__subtitle {
   font-size: 24rpx;
-  color: #9B8ABF;
+  color: #9b8abf;
   letter-spacing: 6rpx;
 }
 
@@ -266,7 +345,7 @@ function onStartJourney() {
 
 .home__section-title {
   font-size: 22rpx;
-  color: #7E6B9E;
+  color: #7e6b9e;
   letter-spacing: 8rpx;
   white-space: nowrap;
 }
@@ -274,7 +353,12 @@ function onStartJourney() {
 .home__dash {
   width: 56rpx;
   height: 1rpx;
-  background: linear-gradient(90deg, transparent 0%, rgba(126, 107, 158, 0.4) 50%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(126, 107, 158, 0.4) 50%,
+    transparent 100%
+  );
 }
 
 /* ── Grid ── */
@@ -292,10 +376,13 @@ function onStartJourney() {
   margin: 0 10rpx;
   min-height: 190rpx;
 
-  &:first-child { margin-left: 0; }
-  &:last-child { margin-right: 0; }
+  &:first-child {
+    margin-left: 0;
+  }
+  &:last-child {
+    margin-right: 0;
+  }
 }
-
 
 /* ── CTA Section ── */
 .home__cta-section {
@@ -322,7 +409,12 @@ function onStartJourney() {
 .home__cta-line {
   width: 100rpx;
   height: 1rpx;
-  background: linear-gradient(90deg, transparent 0%, rgba(201, 168, 76, 0.2) 50%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 168, 76, 0.2) 50%,
+    transparent 100%
+  );
 }
 
 .home__cta {
@@ -330,7 +422,7 @@ function onStartJourney() {
   max-width: 600rpx;
   height: 100rpx;
   border-radius: 50rpx;
-  background: linear-gradient(135deg, #D4B05E 0%, #B8923A 50%, #C9A84C 100%);
+  background: linear-gradient(135deg, #d4b05e 0%, #b8923a 50%, #c9a84c 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -338,8 +430,9 @@ function onStartJourney() {
     0 8rpx 40rpx rgba(201, 168, 76, 0.25),
     0 2rpx 8rpx rgba(201, 168, 76, 0.15),
     inset 0 1rpx 0 rgba(255, 255, 255, 0.2);
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.2s ease;
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.2s ease;
   margin-bottom: 20rpx;
 
   &:active {
@@ -353,7 +446,7 @@ function onStartJourney() {
 .home__cta-text {
   font-size: 34rpx;
   font-weight: 600;
-  color: #0D0221;
+  color: #0d0221;
   letter-spacing: 8rpx;
 }
 
@@ -368,5 +461,54 @@ function onStartJourney() {
   height: 80rpx;
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ── Video Overlay ── */
+.video-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-overlay__box {
+  position: relative;
+  width: 90%;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.video-overlay__player {
+  width: 100%;
+  height: 100%;
+}
+
+.video-overlay__close {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.video-overlay__close-icon {
+  font-size: 28rpx;
+  color: #fff;
+  line-height: 1;
 }
 </style>

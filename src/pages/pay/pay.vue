@@ -13,52 +13,75 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { ref } from "vue";
+import { onLoad } from "@dcloudio/uni-app";
 
-const loading = ref(true)
-const error = ref('')
+const loading = ref(true);
+const error = ref("");
 
 onLoad((options) => {
-  const qty = options?.qty
-  const uid = decodeURIComponent(options?.uid || '')
+  uni.showToast({
+    title: "进入支付页",
+    icon: "none",
+  });
+  const qty = options?.qty;
+  const uid = decodeURIComponent(options?.uid || "");
 
   if (!qty || !uid) {
-    loading.value = false
-    error.value = '参数缺失'
-    return
+    loading.value = false;
+    error.value = "参数缺失";
+    return;
   }
 
-  startPayment(qty, uid)
-})
+  startPayment(qty, uid);
+});
 
 async function startPayment(qty, uid) {
   try {
     // #ifdef MP-WEIXIN
     const loginRes = await new Promise((resolve, reject) => {
       uni.login({
-        provider: 'weixin',
+        provider: "weixin",
         success: resolve,
         fail: reject,
-      })
-    })
+      });
+    });
+    uni.showToast({
+      title: "uid" + uid,
+      icon: "none",
+    });
+
+    const requestUrl =
+      "https://kuixing.cloud/kx/kxapi.action?actionKey=startMakingPaymentByWxMiniProgram" +
+      "&code=" +
+      loginRes.code +
+      "&qty=" +
+      qty +
+      "&uid=" +
+      encodeURIComponent(uid);
+
+    console.log("[pay] requesting:", requestUrl);
 
     const res = await new Promise((resolve, reject) => {
       uni.request({
-        method: 'GET',
-        header: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        url:
-          'https://kuixing.cloud/kx/kxapi.action?actionKey=startMakingPaymentByWxMiniProgram' +
-          '&code=' + loginRes.code +
-          '&qty=' + qty +
-          '&uid=' + encodeURIComponent(uid),
-        success: (r) => resolve(r.data),
-        fail: reject,
-      })
-    })
+        method: "GET",
+        url: requestUrl,
+        success: (r) => {
+          console.log("[pay] response status:", r.statusCode, r.data);
+          resolve(r.data);
+        },
+        fail: (err) => {
+          console.error("[pay] request failed:", JSON.stringify(err));
+          reject(err);
+        },
+      });
+    });
 
-    const pay = res.kf.dataDetail
-
+    const pay = res.kf.dataDetail;
+    uni.showToast({
+      title: "api call make payment done",
+      icon: "none",
+    });
     await new Promise((resolve, reject) => {
       wx.requestPayment({
         timeStamp: pay.timeStamp,
@@ -68,36 +91,39 @@ async function startPayment(qty, uid) {
         paySign: pay.paySign,
         success: resolve,
         fail: (err) => {
-          if (err.errMsg && err.errMsg.includes('cancel')) {
-            reject(new Error('cancel'))
+          if (err.errMsg && err.errMsg.includes("cancel")) {
+            reject(new Error("cancel"));
           } else {
-            reject(err)
+            reject(err);
           }
         },
-      })
-    })
+      });
+    });
 
     uni.redirectTo({
-      url: '/pages/webview/webview?url=' + encodeURIComponent('https://kuixing.cloud/topupsuccess'),
-    })
+      url:
+        "/pages/webview/webview?url=" +
+        encodeURIComponent("https://kuixing.cloud/topupsuccess"),
+    });
     // #endif
 
     // #ifndef MP-WEIXIN
-    loading.value = false
-    error.value = '微信支付仅在小程序内可用'
+    loading.value = false;
+    error.value = "微信支付仅在小程序内可用";
     // #endif
   } catch (err) {
-    if (err.message === 'cancel') {
-      uni.navigateBack()
-      return
+    if (err.message === "cancel") {
+      uni.navigateBack();
+      return;
     }
-    loading.value = false
-    error.value = '支付失败: ' + (err.errMsg || err.message || JSON.stringify(err))
+    loading.value = false;
+    error.value =
+      "支付失败: " + (err.errMsg || err.message || JSON.stringify(err));
   }
 }
 
 function goBack() {
-  uni.navigateBack()
+  uni.navigateBack();
 }
 </script>
 
@@ -105,7 +131,7 @@ function goBack() {
 .pay-page {
   width: 100vw;
   height: 100vh;
-  background: #0D0221;
+  background: #0d0221;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -121,19 +147,26 @@ function goBack() {
 
 .pay-page__loading-star {
   font-size: 64rpx;
-  color: #C9A84C;
+  color: #c9a84c;
   margin-bottom: 24rpx;
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
 .pay-page__loading-text {
   font-size: 28rpx;
-  color: #B8A9CC;
+  color: #b8a9cc;
   letter-spacing: 4rpx;
 }
 
@@ -147,13 +180,13 @@ function goBack() {
 
 .pay-page__error-icon {
   font-size: 80rpx;
-  color: #E74C3C;
+  color: #e74c3c;
   margin-bottom: 24rpx;
 }
 
 .pay-page__error-text {
   font-size: 28rpx;
-  color: #B8A9CC;
+  color: #b8a9cc;
   text-align: center;
   margin-bottom: 40rpx;
   line-height: 1.6;
@@ -162,9 +195,9 @@ function goBack() {
 .pay-page__error-btn {
   padding: 16rpx 64rpx;
   background: rgba(201, 168, 76, 0.15);
-  border: 1rpx solid #C9A84C;
+  border: 1rpx solid #c9a84c;
   border-radius: 40rpx;
-  color: #C9A84C;
+  color: #c9a84c;
   font-size: 28rpx;
   letter-spacing: 2rpx;
 }

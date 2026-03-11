@@ -22,65 +22,78 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad as onPageLoad } from '@dcloudio/uni-app'
-import { setAgentId, buildWebviewUrl } from '../../utils/agent'
+import { ref } from "vue";
+import { onLoad as onPageLoad } from "@dcloudio/uni-app";
+import { setAgentId, buildWebviewUrl } from "../../utils/agent";
 
-const webviewUrl = ref('')
-const loading = ref(true)
+const webviewUrl = ref("");
+const loading = ref(true);
 
 onPageLoad((options) => {
   if (options?.agentId) {
-    setAgentId(options.agentId)
+    setAgentId(options.agentId);
   }
 
   // Allow overriding the URL (e.g. after payment redirect)
   if (options?.url) {
-    const overrideUrl = decodeURIComponent(options.url)
-    webviewUrl.value = buildWebviewUrl(overrideUrl)
-    return
+    const overrideUrl = decodeURIComponent(options.url);
+    webviewUrl.value = buildWebviewUrl(overrideUrl);
+    return;
   }
 
   // On WeChat MP: login to get openid, then load the webview with it
   // #ifdef MP-WEIXIN
   uni.login({
-    provider: 'weixin',
+    provider: "weixin",
     success(loginRes) {
       uni.request({
-        method: 'GET',
-        header: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        url: 'https://kuixing.cloud/kx/kxapi.action?actionKey=getMiniProgramOpenid&code=' + loginRes.code,
+        method: "GET",
+        header: { "Content-Type": "application/x-www-form-urlencoded" },
+        url:
+          "https://kuixing.cloud/kx/kxapi.action?actionKey=getMiniProgramOpenid&code=" +
+          loginRes.code,
         success(resp) {
-          const mpOpenid = resp?.data?.kf?.dataDetail || ''
-          
-          webviewUrl.value = buildWebviewUrl('https://kuixing.cloud/?from=miniprogram', {
-            mp_openid: mpOpenid,
-          })
+          const mpOpenid = resp?.data?.kf?.dataDetail || "";
+
+          webviewUrl.value = buildWebviewUrl(
+            "https://kuixing.cloud/?from=miniprogram",
+            {
+              mp_openid: mpOpenid,
+            },
+          );
         },
         fail() {
-          webviewUrl.value = buildWebviewUrl('https://kuixing.cloud/?from=miniprogram')
+          webviewUrl.value = buildWebviewUrl(
+            "https://kuixing.cloud/?from=miniprogram",
+          );
         },
-      })
+      });
     },
     fail() {
-      webviewUrl.value = buildWebviewUrl('https://kuixing.cloud/?from=miniprogram')
+      webviewUrl.value = buildWebviewUrl(
+        "https://kuixing.cloud/?from=miniprogram",
+      );
     },
-  })
+  });
   // #endif
 
   // On other platforms: load directly without wx.login
   // #ifndef MP-WEIXIN
-  webviewUrl.value = buildWebviewUrl('https://kuixing.cloud/?from=miniprogram')
+  webviewUrl.value = buildWebviewUrl("https://kuixing.cloud/?from=miniprogram");
   // #endif
-})
+});
 
 function onLoad() {
-  loading.value = false
+  loading.value = false;
 }
 
 function onError() {
-  loading.value = false
-  uni.showToast({ title: '页面加载失败，请检查网络', icon: 'none', duration: 2500 })
+  loading.value = false;
+  uni.showToast({
+    title: "页面加载失败，请检查网络",
+    icon: "none",
+    duration: 2500,
+  });
 }
 
 /**
@@ -91,65 +104,65 @@ function onError() {
  * calls a share. event.detail.data is an array of all queued messages.
  */
 function onMessage(event) {
-  const data = event?.detail?.data
-  alert(data)
-  if (!data) return
+  const data = event?.detail?.data;
+  alert(data);
+  if (!data) return;
 
-  const messages = Array.isArray(data) ? data : [data]
-  
+  const messages = Array.isArray(data) ? data : [data];
+
   for (const msg of messages) {
-    alert(msg.action)
-    if (msg.action === 'saveImage' && msg.url) {
-      alert('saveimage')
-      saveImageToAlbum(msg.url)
+    alert(msg.action);
+    if (msg.action === "saveImage" && msg.url) {
+      alert("saveimage");
+      saveImageToAlbum(msg.url);
     }
   }
 }
 
 function saveImageToAlbum(imageUrl) {
-  uni.showLoading({ title: '保存中…' })
+  uni.showLoading({ title: "保存中…" });
 
   // Download the image first, then save to album
   uni.downloadFile({
     url: imageUrl,
     success(downloadRes) {
       if (downloadRes.statusCode !== 200) {
-        uni.hideLoading()
-        uni.showToast({ title: '图片下载失败', icon: 'none' })
-        return
+        uni.hideLoading();
+        uni.showToast({ title: "图片下载失败", icon: "none" });
+        return;
       }
 
       uni.saveImageToPhotosAlbum({
         filePath: downloadRes.tempFilePath,
         success() {
-          uni.hideLoading()
-          uni.showToast({ title: '已保存到相册', icon: 'success' })
+          uni.hideLoading();
+          uni.showToast({ title: "已保存到相册", icon: "success" });
         },
         fail(err) {
-          uni.hideLoading()
+          uni.hideLoading();
           // User denied permission — guide them to settings
-          if (err.errMsg?.includes('deny') || err.errMsg?.includes('auth')) {
+          if (err.errMsg?.includes("deny") || err.errMsg?.includes("auth")) {
             uni.showModal({
-              title: '需要相册权限',
-              content: '请在设置中开启相册写入权限',
-              confirmText: '去设置',
+              title: "需要相册权限",
+              content: "请在设置中开启相册写入权限",
+              confirmText: "去设置",
               success(modalRes) {
                 if (modalRes.confirm) {
-                  uni.openSetting()
+                  uni.openSetting();
                 }
               },
-            })
+            });
           } else {
-            uni.showToast({ title: '保存失败', icon: 'none' })
+            uni.showToast({ title: "保存失败", icon: "none" });
           }
         },
-      })
+      });
     },
     fail() {
-      uni.hideLoading()
-      uni.showToast({ title: '图片下载失败', icon: 'none' })
+      uni.hideLoading();
+      uni.showToast({ title: "图片下载失败", icon: "none" });
     },
-  })
+  });
 }
 </script>
 
@@ -158,7 +171,7 @@ function saveImageToAlbum(imageUrl) {
   width: 100vw;
   height: 100vh;
   position: relative;
-  background: #0D0221;
+  background: #0d0221;
 }
 
 .webview-page__loading {
@@ -168,7 +181,7 @@ function saveImageToAlbum(imageUrl) {
   right: 0;
   bottom: 0;
   z-index: 999;
-  background: #0D0221;
+  background: #0d0221;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -177,19 +190,26 @@ function saveImageToAlbum(imageUrl) {
 
 .webview-page__loading-star {
   font-size: 64rpx;
-  color: #C9A84C;
+  color: #c9a84c;
   margin-bottom: 24rpx;
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
 .webview-page__loading-text {
   font-size: 28rpx;
-  color: #B8A9CC;
+  color: #b8a9cc;
   letter-spacing: 4rpx;
 }
 </style>
