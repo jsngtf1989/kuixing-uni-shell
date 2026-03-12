@@ -79,6 +79,7 @@ export function preloadOnLaunch() {
         loginRes.code;
       uni.request({
         method: "GET",
+        header: { "Content-Type": "application/x-www-form-urlencoded" },
         url: reqUrl,
         success(resp) {
           const openidData = resp?.data?.kf?.dataDetail;
@@ -111,6 +112,7 @@ export function fetchAgentIdByOpenid(mpOpenid) {
 
   uni.request({
     method: "GET",
+    header: { "Content-Type": "application/x-www-form-urlencoded" },
     url,
     success(resp) {
       const detail = resp?.data?.kf?.dataDetail;
