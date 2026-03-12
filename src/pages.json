@@ -46,6 +46,78 @@
           "titleNView": false
         }
       }
+    },
+    {
+      "path": "pages/content-detail/content-detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "详情",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
+    },
+    {
+      "path": "pages/encyclopedia-list/encyclopedia-list",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "百科",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
+    },
+    {
+      "path": "pages/encyclopedia-detail/encyclopedia-detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "详情",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
+    },
+    {
+      "path": "pages/calendar/calendar",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "老黄历",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
+    },
+    {
+      "path": "pages/feedback/feedback",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "意见反馈",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
+    },
+    {
+      "path": "pages/about/about",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "关于我们",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
     }
   ],
   "globalStyle": {

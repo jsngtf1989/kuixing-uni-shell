@@ -7,98 +7,119 @@
     <view class="home__orb home__orb--1" />
     <view class="home__orb home__orb--2" />
 
-    <!-- ─── Header ─── -->
-    <view class="home__header">
-      <view class="home__logo-mark">
-        <image
-          class="home__logo-img"
-          src="/static/images/kuixinghomelogo.png"
-          mode="aspectFit"
-        />
-      </view>
-      <text class="home__title">魁星命理</text>
-      <view class="home__rule">
-        <view class="home__rule-wing" />
-        <view class="home__rule-diamond" />
-        <view class="home__rule-wing" />
-      </view>
-      <text class="home__subtitle">紫微斗数 · 专业命理平台</text>
-    </view>
+    <scroll-view
+      scroll-y
+      :show-scrollbar="false"
+      :enhanced="true"
+      class="home__scroll"
+    >
+      <!-- ─── Header ─── -->
+      <view class="home__header">
+        <view class="home__logo-mark">
+          <image
+            class="home__logo-img"
+            src="/static/images/kuixinghomelogo.png"
+            mode="aspectFit"
+          />
+        </view>
+        <text class="home__title">魁星国学</text>
+        <view class="home__rule">
+          <view class="home__rule-wing" />
+          <view class="home__rule-diamond" />
+          <view class="home__rule-wing" />
+        </view>
+        <text class="home__subtitle">紫微斗数 · 专业命理平台</text>
 
-    <!-- ─── Section: Core Features ─── -->
-    <view class="home__section">
-      <view class="home__section-head">
-        <view class="home__dash" />
-        <text class="home__section-title">命理功能</text>
-        <view class="home__dash" />
+        <!-- ─── CTA (hero) ─── -->
+        <view class="home__cta" @click="onStartJourney">
+          <text class="home__cta-text">开启魁星之旅</text>
+          <text class="home__cta-arrow">→</text>
+        </view>
+        <text class="home__cta-hint">点击进入 · 探索紫微星命的奥秘</text>
       </view>
 
-      <view class="home__grid">
+      <!-- ─── Section: 命理视频 ─── -->
+      <view class="home__section">
+        <view class="home__section-head">
+          <view class="home__dash" />
+          <text class="home__section-title">命理视频</text>
+          <view class="home__dash" />
+        </view>
+
+        <view class="home__grid">
+          <view class="home__grid-row">
+            <FeatureCard
+              v-for="item in videoRow1"
+              :key="item.label"
+              :icon="item.icon"
+              :label="item.label"
+              class="home__cell"
+              @tap="onCardTap(item)"
+            />
+          </view>
+          <view class="home__grid-row">
+            <FeatureCard
+              v-for="item in videoRow2"
+              :key="item.label"
+              :icon="item.icon"
+              :label="item.label"
+              class="home__cell"
+              @tap="onCardTap(item)"
+            />
+          </view>
+        </view>
+      </view>
+
+      <!-- ─── Section: 实用工具 ─── -->
+      <view class="home__section">
+        <view class="home__section-head">
+          <view class="home__dash" />
+          <text class="home__section-title">实用工具</text>
+          <view class="home__dash" />
+        </view>
+
         <view class="home__grid-row">
           <FeatureCard
-            v-for="item in topRow1"
+            v-for="item in toolItems"
             :key="item.label"
             :icon="item.icon"
             :label="item.label"
+            :subtitle="item.subtitle"
             class="home__cell"
             @tap="onCardTap(item)"
           />
         </view>
-        <view class="home__grid-row">
-          <FeatureCard
-            v-for="item in topRow2"
-            :key="item.label"
-            :icon="item.icon"
-            :label="item.label"
-            class="home__cell"
-            @tap="onCardTap(item)"
-          />
-        </view>
-      </view>
-    </view>
-
-    <!-- ─── Section: Info ─── -->
-    <view class="home__section">
-      <view class="home__section-head">
-        <view class="home__dash" />
-        <text class="home__section-title">了解更多</text>
-        <view class="home__dash" />
       </view>
 
-      <view class="home__grid-row">
-        <FeatureCard
-          v-for="item in infoItems"
+      <!-- ─── Footer links: 关于/协议/隐私 ─── -->
+      <view class="home__footer">
+        <view
+          v-for="item in footerItems"
           :key="item.label"
-          :icon="item.icon"
-          :label="item.label"
-          class="home__cell"
+          class="home__footer-item"
           @tap="onCardTap(item)"
-        />
-      </view>
-    </view>
-
-    <!-- ─── CTA ─── -->
-    <view class="home__cta-section">
-      <view class="home__cta-ornament">
-        <view class="home__cta-line" />
-        <text class="home__cta-ornament-char">✦</text>
-        <view class="home__cta-line" />
+        >
+          <view class="home__footer-icon-wrap">
+            <text class="home__footer-icon">{{ item.icon }}</text>
+          </view>
+          <text class="home__footer-label">{{ item.label }}</text>
+          <text class="home__footer-chevron">›</text>
+        </view>
       </view>
 
-      <view class="home__cta" @click="onStartJourney">
-        <text class="home__cta-text">开启魁星之旅</text>
-      </view>
-
-      <text class="home__cta-hint">探索紫微星命的奥秘</text>
-    </view>
-
-    <!-- Bottom safe area -->
-    <view class="home__safe-bottom" />
+      <!-- Bottom safe area -->
+      <view class="home__safe-bottom" />
+    </scroll-view>
 
     <!-- ─── Video Overlay ─── -->
-    <view v-if="showVideo" class="video-overlay" @tap.self="closeVideo">
+    <view
+      v-if="showVideo && videoSrc"
+      class="video-overlay"
+      @tap.self="closeVideo"
+    >
       <view class="video-overlay__box">
         <video
+          v-if="videoSrc"
           class="video-overlay__player"
           :src="videoSrc"
           autoplay
@@ -130,7 +151,8 @@ uni.getSystemInfo({
 const showVideo = ref(false);
 const videoSrc = ref("");
 
-const topRow1 = [
+// ── Section 1: 命理视频 (6 cards) ──
+const videoRow1 = [
   {
     icon: "紫",
     label: "紫微",
@@ -151,7 +173,7 @@ const topRow1 = [
   },
 ];
 
-const topRow2 = [
+const videoRow2 = [
   {
     icon: "年",
     label: "流年",
@@ -172,26 +194,66 @@ const topRow2 = [
   },
 ];
 
-const infoItems = [
-  { icon: "缘", label: "联系我们", action: "contact" },
-  { icon: "魁", label: "关于魁星", action: "about" },
+// ── Section 2: 实用工具 (2 cards) ──
+const toolItems = [
+  {
+    icon: "历",
+    label: "老黄历",
+    subtitle: "天干地支万年历",
+    action: "navigate",
+    url: "/pages/calendar/calendar",
+  },
+  {
+    icon: "言",
+    label: "意见反馈",
+    subtitle: "帮助我们改进",
+    action: "navigate",
+    url: "/pages/feedback/feedback",
+  },
 ];
+
+// ── Footer: 关于/协议/隐私 (3 list items) ──
+const footerItems = [
+  {
+    icon: "魁",
+    label: "关于我们",
+    action: "navigate",
+    url: "/pages/about/about",
+  },
+  {
+    icon: "约",
+    label: "用户协议",
+    action: "content",
+    actionKey: "getSingleDataByDocType&dataType=user-terms",
+  },
+  {
+    icon: "盾",
+    label: "隐私政策",
+    action: "content",
+    actionKey: "getSingleDataByDocType&dataType=privacy-policy",
+  },
+];
+
+let navigating = false;
 
 function onCardTap(item) {
   if (item.action === "video") {
     videoSrc.value = item.video;
     showVideo.value = true;
-  } else if (item.action === "contact") {
-    uni.showModal({
-      title: "联系我们",
-      content: "请访问 kuixing.cloud 获取联系方式",
-      showCancel: false,
-    });
-  } else if (item.action === "about") {
-    uni.showModal({
-      title: "关于魁星",
-      content: "魁星命理 — 专业紫微斗数命理平台\n版本 1.0.0",
-      showCancel: false,
+    return;
+  }
+
+  if (navigating) return;
+  navigating = true;
+  setTimeout(() => {
+    navigating = false;
+  }, 600);
+
+  if (item.action === "navigate") {
+    uni.navigateTo({ url: item.url });
+  } else if (item.action === "content") {
+    uni.navigateTo({
+      url: `/pages/content-detail/content-detail?actionKey=${item.actionKey}&title=${encodeURIComponent(item.label)}`,
     });
   }
 }
@@ -222,12 +284,17 @@ function onStartJourney() {
   overflow: hidden;
 }
 
+.home__scroll {
+  height: 100vh;
+}
+
 /* ── Ambient background orbs ── */
 .home__orb {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
   filter: blur(80rpx);
+  z-index: 0;
 
   &--1 {
     width: 400rpx;
@@ -267,7 +334,6 @@ function onStartJourney() {
 .home__logo-mark {
   width: 100rpx;
   height: 100rpx;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -288,7 +354,6 @@ function onStartJourney() {
   margin-bottom: 20rpx;
 }
 
-/* Decorative horizontal rule with diamond */
 .home__rule {
   display: flex;
   align-items: center;
@@ -384,40 +449,9 @@ function onStartJourney() {
   }
 }
 
-/* ── CTA Section ── */
-.home__cta-section {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 32rpx 0 12rpx;
-}
-
-.home__cta-ornament {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-  margin-bottom: 36rpx;
-}
-
-.home__cta-ornament-char {
-  font-size: 22rpx;
-  color: rgba(201, 168, 76, 0.35);
-}
-
-.home__cta-line {
-  width: 100rpx;
-  height: 1rpx;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(201, 168, 76, 0.2) 50%,
-    transparent 100%
-  );
-}
-
+/* ── CTA Button (inside header) ── */
 .home__cta {
+  margin-top: 40rpx;
   width: 100%;
   max-width: 600rpx;
   height: 100rpx;
@@ -426,20 +460,38 @@ function onStartJourney() {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12rpx;
   box-shadow:
-    0 8rpx 40rpx rgba(201, 168, 76, 0.25),
-    0 2rpx 8rpx rgba(201, 168, 76, 0.15),
-    inset 0 1rpx 0 rgba(255, 255, 255, 0.2);
+    0 8rpx 40rpx rgba(201, 168, 76, 0.3),
+    0 2rpx 8rpx rgba(201, 168, 76, 0.2),
+    inset 0 1rpx 0 rgba(255, 255, 255, 0.25);
   transition:
     transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.2s ease;
   margin-bottom: 20rpx;
+  animation: cta-glow 2.5s ease-in-out infinite;
 
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.95);
     box-shadow:
-      0 4rpx 20rpx rgba(201, 168, 76, 0.15),
+      0 4rpx 16rpx rgba(201, 168, 76, 0.15),
       inset 0 1rpx 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+@keyframes cta-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 8rpx 40rpx rgba(201, 168, 76, 0.3),
+      0 2rpx 8rpx rgba(201, 168, 76, 0.2),
+      inset 0 1rpx 0 rgba(255, 255, 255, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 10rpx 60rpx rgba(201, 168, 76, 0.45),
+      0 4rpx 16rpx rgba(201, 168, 76, 0.3),
+      inset 0 1rpx 0 rgba(255, 255, 255, 0.3);
   }
 }
 
@@ -450,10 +502,88 @@ function onStartJourney() {
   letter-spacing: 8rpx;
 }
 
+.home__cta-arrow {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #0d0221;
+  animation: arrow-nudge 1.5s ease-in-out infinite;
+}
+
+@keyframes arrow-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8rpx);
+  }
+}
+
 .home__cta-hint {
   font-size: 20rpx;
   color: rgba(155, 138, 191, 0.6);
   letter-spacing: 4rpx;
+}
+
+/* ── Footer list items ── */
+.home__footer {
+  position: relative;
+  z-index: 1;
+  margin-top: 36rpx;
+  background: rgba(26, 11, 66, 0.4);
+  border: 1rpx solid rgba(201, 168, 76, 0.08);
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.home__footer-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 28rpx;
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: rgba(201, 168, 76, 0.05);
+  }
+}
+
+.home__footer-icon-wrap {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(201, 168, 76, 0.15),
+    rgba(201, 168, 76, 0.05)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.home__footer-icon {
+  font-size: 24rpx;
+  color: #d4b05e;
+}
+
+.home__footer-label {
+  flex: 1;
+  font-size: 28rpx;
+  color: #b8a9cc;
+  letter-spacing: 2rpx;
+}
+
+.home__footer-chevron {
+  font-size: 32rpx;
+  color: rgba(201, 168, 76, 0.3);
+  flex-shrink: 0;
 }
 
 /* ── Safe area ── */

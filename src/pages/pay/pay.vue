@@ -46,10 +46,6 @@ async function startPayment(qty, uid) {
         fail: reject,
       });
     });
-    uni.showToast({
-      title: "uid" + uid,
-      icon: "none",
-    });
 
     const requestUrl =
       "https://kuixing.cloud/kx/kxapi.action?actionKey=startMakingPaymentByWxMiniProgram" +
@@ -60,11 +56,10 @@ async function startPayment(qty, uid) {
       "&uid=" +
       encodeURIComponent(uid);
 
-    console.log("[pay] requesting:", requestUrl);
-
     const res = await new Promise((resolve, reject) => {
       uni.request({
         method: "GET",
+        header: { "Content-Type": "application/x-www-form-urlencoded" },
         url: requestUrl,
         success: (r) => {
           console.log("[pay] response status:", r.statusCode, r.data);
@@ -77,11 +72,7 @@ async function startPayment(qty, uid) {
       });
     });
 
-    const pay = res.kf.dataDetail;
-    uni.showToast({
-      title: "api call make payment done",
-      icon: "none",
-    });
+    const pay = res.kf.dataDetail.dataDetail || res.kf.dataDetail;
     await new Promise((resolve, reject) => {
       wx.requestPayment({
         timeStamp: pay.timeStamp,

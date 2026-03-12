@@ -46,14 +46,25 @@ onPageLoad((options) => {
   uni.login({
     provider: "weixin",
     success(loginRes) {
+      const reqUrl =
+        "https://kuixing.cloud/kx/kxapi.action?actionKey=getMiniProgramOpenid&code=" +
+        loginRes.code;
+      console.log("[webview] requesting:", reqUrl);
       uni.request({
         method: "GET",
         header: { "Content-Type": "application/x-www-form-urlencoded" },
-        url:
-          "https://kuixing.cloud/kx/kxapi.action?actionKey=getMiniProgramOpenid&code=" +
-          loginRes.code,
+        url: reqUrl,
         success(resp) {
-          const mpOpenid = resp?.data?.kf?.dataDetail || "";
+          console.log(
+            "[webview] response:",
+            resp.statusCode,
+            JSON.stringify(resp.data).substring(0, 200),
+          );
+          const openidData = resp?.data?.kf?.dataDetail;
+          const mpOpenid =
+            typeof openidData === "object" && openidData?.dataDetail
+              ? openidData.dataDetail
+              : openidData || "";
 
           webviewUrl.value = buildWebviewUrl(
             "https://kuixing.cloud/?from=miniprogram",
@@ -62,14 +73,19 @@ onPageLoad((options) => {
             },
           );
         },
-        fail() {
+        fail(reqErr) {
+          console.error(
+            "[webview] uni.request failed:",
+            JSON.stringify(reqErr),
+          );
           webviewUrl.value = buildWebviewUrl(
             "https://kuixing.cloud/?from=miniprogram",
           );
         },
       });
     },
-    fail() {
+    fail(loginErr) {
+      console.error("[webview] uni.login failed:", JSON.stringify(loginErr));
       webviewUrl.value = buildWebviewUrl(
         "https://kuixing.cloud/?from=miniprogram",
       );

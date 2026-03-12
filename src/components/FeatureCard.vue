@@ -1,5 +1,5 @@
 <template>
-  <view class="fc" :class="{ 'fc--wide': wide }" @click="$emit('tap')">
+  <view class="fc" :class="{ 'fc--wide': wide }" @tap.stop="$emit('tap')">
     <!-- Decorative corner accents -->
     <view class="fc__corner fc__corner--tl" />
     <view class="fc__corner fc__corner--br" />
