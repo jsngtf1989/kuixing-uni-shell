@@ -111,6 +111,40 @@
       <view class="home__safe-bottom" />
     </scroll-view>
 
+    <!-- ─── Portal Transition Overlay ─── -->
+    <view v-if="showPortal" class="portal">
+      <view class="portal__bg" />
+
+      <!-- Expanding rings -->
+      <view class="portal__ring portal__ring--1" />
+      <view class="portal__ring portal__ring--2" />
+      <view class="portal__ring portal__ring--3" />
+
+      <!-- Central star burst -->
+      <view class="portal__star">
+        <text class="portal__star-glyph">✦</text>
+      </view>
+
+      <!-- Radiating particles -->
+      <view class="portal__particle portal__particle--1" />
+      <view class="portal__particle portal__particle--2" />
+      <view class="portal__particle portal__particle--3" />
+      <view class="portal__particle portal__particle--4" />
+      <view class="portal__particle portal__particle--5" />
+      <view class="portal__particle portal__particle--6" />
+      <view class="portal__particle portal__particle--7" />
+      <view class="portal__particle portal__particle--8" />
+
+      <!-- Caption text -->
+      <view class="portal__caption">
+        <text class="portal__caption-text">命运之门已开启</text>
+        <text class="portal__caption-sub">· 探索星命 ·</text>
+      </view>
+
+      <!-- Final flash wipe -->
+      <view class="portal__flash" />
+    </view>
+
     <!-- ─── Video Overlay ─── -->
     <view
       v-if="showVideo && videoSrc"
@@ -138,7 +172,9 @@
 
 <script setup>
 import { ref } from "vue";
+import { onShareAppMessage, onShareTimeline } from "@dcloudio/uni-app";
 import FeatureCard from "../../components/FeatureCard.vue";
+import { getAgentId } from "../../utils/agent";
 
 const statusBarHeight = ref(0);
 
@@ -150,6 +186,7 @@ uni.getSystemInfo({
 
 const showVideo = ref(false);
 const videoSrc = ref("");
+const showPortal = ref(false);
 
 // ── Section 1: 命理视频 (6 cards) ──
 const videoRow1 = [
@@ -264,8 +301,45 @@ function closeVideo() {
 }
 
 function onStartJourney() {
-  uni.navigateTo({ url: "/pages/webview/webview" });
+  if (showPortal.value) return;
+  showPortal.value = true;
+
+  setTimeout(() => {
+    uni.navigateTo({
+      url: "/pages/webview/webview",
+      success() {
+        setTimeout(() => {
+          showPortal.value = false;
+        }, 300);
+      },
+      fail() {
+        showPortal.value = false;
+      },
+    });
+  }, 1800);
 }
+
+// ── Sharing ──
+
+function buildSharePath() {
+  const agentId = getAgentId();
+  return agentId
+    ? `/pages/webview/webview?agentId=${agentId}`
+    : "/pages/webview/webview";
+}
+
+onShareAppMessage(() => ({
+  title: "魁星国学 · 紫微斗数专业命理平台",
+  path: buildSharePath(),
+}));
+
+onShareTimeline(() => {
+  const agentId = getAgentId();
+  return {
+    title: "魁星国学 · 紫微斗数专业命理平台",
+    query: agentId ? `agentId=${agentId}` : "",
+  };
+});
 </script>
 
 <style lang="scss" scoped>
@@ -640,5 +714,296 @@ function onStartJourney() {
   font-size: 28rpx;
   color: #fff;
   line-height: 1;
+}
+
+/* ══════════════════════════════════════════
+   Portal transition
+   ══════════════════════════════════════════ */
+.portal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+}
+
+.portal__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 50% 45%,
+    #1a0a3e 0%,
+    #0d0221 60%,
+    #000 100%
+  );
+  animation: portal-bg-in 0.5s ease-out forwards;
+}
+
+@keyframes portal-bg-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ── Central star ── */
+.portal__star {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: star-entrance 1.6s ease-out forwards;
+}
+
+.portal__star-glyph {
+  font-size: 80rpx;
+  color: #f0d76e;
+  text-shadow:
+    0 0 20rpx rgba(240, 215, 110, 0.9),
+    0 0 60rpx rgba(201, 168, 76, 0.6),
+    0 0 120rpx rgba(201, 168, 76, 0.3);
+  animation: star-pulse 1.6s ease-in-out forwards;
+}
+
+@keyframes star-entrance {
+  0% {
+    transform: translate(-50%, -55%) scale(0);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(-50%, -55%) scale(1.3);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(-50%, -55%) scale(1);
+  }
+  80% {
+    transform: translate(-50%, -55%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -55%) scale(3);
+    opacity: 0;
+  }
+}
+
+@keyframes star-pulse {
+  0% {
+    font-size: 0rpx;
+  }
+  20% {
+    font-size: 100rpx;
+  }
+  35% {
+    font-size: 80rpx;
+  }
+  80% {
+    font-size: 90rpx;
+  }
+  100% {
+    font-size: 200rpx;
+  }
+}
+
+/* ── Expanding rings ── */
+.portal__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  border: 2rpx solid rgba(201, 168, 76, 0.5);
+  transform: translate(-50%, -55%) scale(0);
+  z-index: 5;
+
+  &--1 {
+    width: 200rpx;
+    height: 200rpx;
+    border-color: rgba(201, 168, 76, 0.6);
+    animation: ring-expand 1.4s 0.2s ease-out forwards;
+  }
+  &--2 {
+    width: 400rpx;
+    height: 400rpx;
+    border-color: rgba(155, 138, 191, 0.4);
+    animation: ring-expand 1.4s 0.4s ease-out forwards;
+  }
+  &--3 {
+    width: 700rpx;
+    height: 700rpx;
+    border-color: rgba(123, 79, 191, 0.25);
+    animation: ring-expand 1.4s 0.6s ease-out forwards;
+  }
+}
+
+@keyframes ring-expand {
+  0% {
+    transform: translate(-50%, -55%) scale(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -55%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* ── Radiating particles ── */
+.portal__particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #f0d76e;
+  box-shadow: 0 0 12rpx rgba(240, 215, 110, 0.8);
+  z-index: 8;
+  opacity: 0;
+
+  &--1 {
+    animation: particle-fly 1.2s 0.3s ease-out forwards;
+    --px: -200rpx;
+    --py: -300rpx;
+  }
+  &--2 {
+    animation: particle-fly 1.2s 0.35s ease-out forwards;
+    --px: 200rpx;
+    --py: -280rpx;
+  }
+  &--3 {
+    animation: particle-fly 1.2s 0.4s ease-out forwards;
+    --px: -300rpx;
+    --py: 50rpx;
+  }
+  &--4 {
+    animation: particle-fly 1.2s 0.45s ease-out forwards;
+    --px: 300rpx;
+    --py: 80rpx;
+  }
+  &--5 {
+    animation: particle-fly 1.2s 0.5s ease-out forwards;
+    --px: -120rpx;
+    --py: 320rpx;
+  }
+  &--6 {
+    animation: particle-fly 1.2s 0.55s ease-out forwards;
+    --px: 150rpx;
+    --py: 300rpx;
+  }
+  &--7 {
+    animation: particle-fly 1.2s 0.38s ease-out forwards;
+    --px: -280rpx;
+    --py: -120rpx;
+  }
+  &--8 {
+    animation: particle-fly 1.2s 0.42s ease-out forwards;
+    --px: 260rpx;
+    --py: -150rpx;
+  }
+}
+
+@keyframes particle-fly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--px), var(--py)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* ── Caption text ── */
+.portal__caption {
+  position: absolute;
+  top: 58%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  animation: caption-fade 1.6s ease-out forwards;
+}
+
+.portal__caption-text {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #e8d5a3;
+  letter-spacing: 10rpx;
+  text-shadow: 0 0 24rpx rgba(201, 168, 76, 0.5);
+}
+
+.portal__caption-sub {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #9b8abf;
+  letter-spacing: 8rpx;
+}
+
+@keyframes caption-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  30% {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ── Final flash wipe ── */
+.portal__flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 45%, #f0d76e, #0d0221 70%);
+  z-index: 20;
+  opacity: 0;
+  animation: flash-wipe 1.8s ease-in forwards;
+}
+
+@keyframes flash-wipe {
+  0% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+    background: #0d0221;
+  }
 }
 </style>
