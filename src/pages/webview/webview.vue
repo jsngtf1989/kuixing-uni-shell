@@ -52,10 +52,6 @@ function hideLoading() {
 onPageLoad((options) => {
   loadingTimer = setTimeout(hideLoading, 8000);
 
-  if (options?.agentId) {
-    setAgentId(options.agentId);
-  }
-
   if (options?.url) {
     const overrideUrl = decodeURIComponent(options.url);
     webviewUrl.value = buildWebviewUrl(overrideUrl);
@@ -106,6 +102,11 @@ function onMessage(event) {
 
   for (const msg of messages) {
     if (msg.action === "setAgentId" && msg.agentId) {
+      uni.showToast({
+        title: `receive agentId: ` + msg.agentId,
+        icon: "none",
+        duration: 2500,
+      });
       setAgentId(msg.agentId);
     } else if (msg.action === "saveImage" && msg.url) {
       saveImageToAlbum(msg.url);
@@ -164,8 +165,8 @@ function saveImageToAlbum(imageUrl) {
 function buildSharePath() {
   const agentId = getAgentId();
   return agentId
-    ? `/pages/webview/webview?agentId=${agentId}`
-    : "/pages/webview/webview";
+    ? `/pages/splash/splash?agentId=${agentId}`
+    : "/pages/splash/splash";
 }
 
 onShareAppMessage(() => ({

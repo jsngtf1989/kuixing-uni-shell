@@ -324,8 +324,8 @@ function onStartJourney() {
 function buildSharePath() {
   const agentId = getAgentId();
   return agentId
-    ? `/pages/webview/webview?agentId=${agentId}`
-    : "/pages/webview/webview";
+    ? `/pages/splash/splash?agentId=${agentId}`
+    : "/pages/splash/splash";
 }
 
 onShareAppMessage(() => ({

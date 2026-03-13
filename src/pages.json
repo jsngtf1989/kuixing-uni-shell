@@ -118,6 +118,18 @@
           "bounce": "none"
         }
       }
+    },
+    {
+      "path": "pages/subscribe/subscribe",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "订阅与关注",
+        "backgroundColor": "#0D0221",
+        "app-plus": {
+          "titleNView": false,
+          "bounce": "none"
+        }
+      }
     }
   ],
   "globalStyle": {

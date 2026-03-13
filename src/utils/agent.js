@@ -3,6 +3,7 @@ import { reactive } from "vue";
 const state = reactive({
   agentId: "",
   mpOpenid: "",
+  upLineAgentId: "",
 });
 
 /**
@@ -28,6 +29,32 @@ export function getAgentId() {
     const stored = uni.getStorageSync("kuixing_agent_id");
     if (stored) {
       state.agentId = stored;
+      return stored;
+    }
+  } catch (_) {
+    /* ignore */
+  }
+  return "";
+}
+
+// ── Upline Agent ID (inviter) ──
+
+export function setUpLineAgentId(id) {
+  if (!id) return;
+  state.upLineAgentId = String(id);
+  try {
+    uni.setStorageSync("kuixing_upline_agent_id", state.upLineAgentId);
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+export function getUpLineAgentId() {
+  if (state.upLineAgentId) return state.upLineAgentId;
+  try {
+    const stored = uni.getStorageSync("kuixing_upline_agent_id");
+    if (stored) {
+      state.upLineAgentId = stored;
       return stored;
     }
   } catch (_) {
@@ -117,7 +144,9 @@ export function fetchAgentIdByOpenid(mpOpenid) {
     success(resp) {
       const detail = resp?.data?.kf?.dataDetail;
       if (detail) {
-        setAgentId(typeof detail === "object" ? detail.dataDetail || "" : detail);
+        setAgentId(
+          typeof detail === "object" ? detail.dataDetail || "" : detail,
+        );
       }
     },
     fail(err) {
@@ -133,11 +162,10 @@ export function buildWebviewUrl(
   base = "https://kuixing.cloud/?from=miniprogram",
   extraParams = {},
 ) {
-  // TODO: remove hardcoded agentId after testing
-  const agentId = getAgentId(); //"52502700"; //
+  const upLineAgentId = getUpLineAgentId();
 
   const params = { ...extraParams };
-  if (agentId) params.agentId = agentId;
+  if (upLineAgentId) params.agentId = upLineAgentId;
 
   const query = Object.entries(params)
     .filter(([, v]) => v)

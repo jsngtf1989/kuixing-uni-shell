@@ -31,21 +31,21 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
-import { setAgentId } from "../../utils/agent";
+import { setUpLineAgentId } from "../../utils/agent";
 
 const visible = ref(false);
 const fadeOut = ref(false);
 
 onLoad((options) => {
   if (options?.agentId) {
-    setAgentId(options.agentId);
+    setUpLineAgentId(options.agentId);
   }
   if (options?.scene) {
     try {
       const scene = decodeURIComponent(options.scene);
       const params = new URLSearchParams(scene);
       if (params.get("agentId")) {
-        setAgentId(params.get("agentId"));
+        setUpLineAgentId(params.get("agentId"));
       }
     } catch (_) {
       /* ignore */

@@ -1,11 +1,11 @@
 <script setup>
 import { onLaunch, onShow } from "@dcloudio/uni-app";
-import { setAgentId, preloadOnLaunch } from "./utils/agent";
+import { setUpLineAgentId, preloadOnLaunch } from "./utils/agent";
 
 onLaunch((options) => {
-  // Extract agentId from launch options (QR code scene, query params, etc.)
+  // Extract inviter agentId (upline) from launch options
   if (options?.query?.agentId) {
-    setAgentId(options.query.agentId);
+    setUpLineAgentId(options.query.agentId);
   }
 
   // WeChat Mini Program: decode scene parameter from QR code
@@ -14,7 +14,7 @@ onLaunch((options) => {
       const scene = decodeURIComponent(options.query.scene);
       const params = new URLSearchParams(scene);
       if (params.get("agentId")) {
-        setAgentId(params.get("agentId"));
+        setUpLineAgentId(params.get("agentId"));
       }
     } catch (e) {
       console.warn("Failed to parse scene parameter:", e);
