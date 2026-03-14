@@ -94,7 +94,9 @@ async function startPayment(qty, uid) {
     uni.redirectTo({
       url:
         "/pages/webview/webview?url=" +
-        encodeURIComponent("https://kuixing.cloud/topupsuccess"),
+        encodeURIComponent(
+          "https://kuixing.cloud/topupsuccess?from=miniprogram",
+        ),
     });
     // #endif
 
