@@ -261,13 +261,13 @@ const footerItems = [
     icon: "约",
     label: "用户协议",
     action: "content",
-    actionKey: "getSingleDataByDocType&dataType=user-terms",
+    actionKey: "getSingleDataByDocType&dataType=user-terms-zh",
   },
   {
     icon: "盾",
     label: "隐私政策",
     action: "content",
-    actionKey: "getSingleDataByDocType&dataType=privacy-policy",
+    actionKey: "getSingleDataByDocType&dataType=privacy-policy-zh",
   },
 ];
 
