@@ -264,7 +264,7 @@ const footerItems = [
     actionKey: "getSingleDataByDocType&dataType=user-terms-zh",
   },
   {
-    icon: "盾",
+    icon: "私",
     label: "隐私政策",
     action: "content",
     actionKey: "getSingleDataByDocType&dataType=privacy-policy-zh",
