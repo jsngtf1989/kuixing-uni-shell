@@ -102,11 +102,6 @@ function onMessage(event) {
 
   for (const msg of messages) {
     if (msg.action === "setAgentId" && msg.agentId) {
-      uni.showToast({
-        title: `receive agentId: ` + msg.agentId,
-        icon: "none",
-        duration: 2500,
-      });
       setAgentId(msg.agentId);
     } else if (msg.action === "saveImage" && msg.url) {
       saveImageToAlbum(msg.url);

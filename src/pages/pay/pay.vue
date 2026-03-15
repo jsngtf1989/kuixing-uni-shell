@@ -20,10 +20,6 @@ const loading = ref(true);
 const error = ref("");
 
 onLoad((options) => {
-  uni.showToast({
-    title: "进入支付页",
-    icon: "none",
-  });
   const qty = options?.qty;
   const uid = decodeURIComponent(options?.uid || "");
 
